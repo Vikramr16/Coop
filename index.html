@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>COOP</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Reset some default browser styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  text-align: center;
+  padding: 40px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.subject-button {
+  display: inline-block;
+  padding: 15px 30px;
+  background-color: #4a90e2;
+  color: white;
+  text-decoration: none;
+  font-size: 1.2rem;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.subject-button:hover {
+  background-color: #357ABD;
+  transform: scale(1.05);
+}
+
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>Select a Subject</h1>
+    <div class="button-group">
+      <a href="accounting.html" class="subject-button">Accounting</a>
+      <a href="tamil.html" class="subject-button">Tamil</a>
+      <a href="maths.html" class="subject-button">Maths</a>
+      <a href="all.html" class="subject-button">All</a>
+    </div>
+  </div>
+</body>
+</html>
