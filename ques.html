@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SRB and DRM Practice Questions</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; background: #f9f9f9; }
+    .quiz-container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+    .question-box { border: 1px solid #ddd; padding: 15px; border-radius: 8px; margin-bottom: 20px; background: #fff; }
+    .question { font-size: 18px; margin-bottom: 10px; }
+    .option { margin: 6px 0; }
+    .btn { margin: 5px 5px 0 0; padding: 6px 12px; border: none; border-radius: 5px; cursor: pointer; }
+    .reset-btn { background: #6c757d; color: white; }
+    .check-btn { background: #007bff; color: white; }
+    .btn:hover { opacity: 0.9; }
+    .result { margin-top: 10px; font-weight: bold; }
+    .navigation { margin-top: 20px; display: flex; justify-content: space-between; }
+    #resetQuizBtn { background:#dc3545; color:white; padding:8px 15px; border:none; border-radius:5px; cursor:pointer; margin-top:15px; }
+
+    /* Green and red blink for question box */
+    .blink-green {
+      animation: blink-green 0.8s linear 2;
+      background-color: #d4edda !important;
+    }
+    @keyframes blink-green {
+      0%, 100% { background-color: #fff; }
+      20%, 80% { background-color: #d4edda; }
+    }
+
+    .blink-red {
+      animation: blink-red 0.8s linear 2;
+      background-color: #f8d7da !important;
+    }
+    @keyframes blink-red {
+      0%, 100% { background-color: #fff; }
+      20%, 80% { background-color: #f8d7da; }
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <div id="quiz"></div>
+
+    <div class="navigation">
+      <button id="prevBtn" disabled>⬅ Prev</button>
+      <button id="nextBtn">Next ➡</button>
+    </div>
+
+    <button id="resetQuizBtn" style="display:none;">Reset Quiz</button>
+  </div>
+
+  <script>
+    let currentPage = 0;
+    const questionsPerPage = 10;
+    let questions = [];
+
+    fetch("questions.json")
+      .then(res => res.json())
+      .then(data => {
+        questions = data;
+        showPage();
+      });
+
+    function showPage() {
+      const start = currentPage * questionsPerPage;
+      const end = start + questionsPerPage;
+      const pageQuestions = questions.slice(start, end);
+
+      const quizDiv = document.getElementById("quiz");
+      quizDiv.innerHTML = pageQuestions.map((q, index) => `
+        <div class="question-box" data-qid="${start + index}">
+          <div class="question">${start + index + 1}. ${q.question}</div>
+          ${q.options.map(opt => `
+            <div class="option">
+              <label>
+                <input type="radio" name="q${start + index}" value="${opt}"> ${opt}
+              </label>
+            </div>
+          `).join("")}
+          <button class="btn reset-btn" onclick="resetChoice(${start + index})">Reset Choices</button>
+          <button class="btn check-btn" onclick="checkAnswer(${start + index})">Check Answer</button>
+          <div class="result" id="result-${start + index}"></div>
+        </div>
+      `).join("");
+
+      document.getElementById("prevBtn").disabled = currentPage === 0;
+      document.getElementById("nextBtn").disabled = end >= questions.length;
+    }
+
+    function resetChoice(qIndex) {
+      const radios = document.querySelectorAll(`input[name='q${qIndex}']`);
+      radios.forEach(r => r.checked = false);
+      document.getElementById(`result-${qIndex}`).textContent = "";
+      // Remove blink classes on reset
+      const box = document.querySelector(`.question-box[data-qid='${qIndex}']`);
+      box.classList.remove("blink-green", "blink-red");
+    }
+
+    function checkAnswer(qIndex) {
+      const q = questions[qIndex];
+      const selected = document.querySelector(`input[name='q${qIndex}']:checked`);
+      const resultDiv = document.getElementById(`result-${qIndex}`);
+      const box = document.querySelector(`.question-box[data-qid='${qIndex}']`);
+      box.classList.remove("blink-green", "blink-red"); // reset before applying
+
+      if (!selected) {
+        alert("Choose an answer!");
+        return;
+      }
+
+      if (selected.value === q.answer) {
+        resultDiv.textContent = "✅ Correct!";
+        box.classList.add("blink-green");
+        setTimeout(() => box.classList.remove("blink-green"), 1000);
+      } else {
+        resultDiv.textContent = "❌ Wrong! Correct: " + q.answer;
+        box.classList.add("blink-red");
+        setTimeout(() => box.classList.remove("blink-red"), 1000);
+      }
+    }
+
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      currentPage++;
+      showPage();
+      if ((currentPage + 1) * questionsPerPage >= questions.length) {
+        document.getElementById("resetQuizBtn").style.display = "inline-block";
+      }
+    });
+
+    document.getElementById("prevBtn").addEventListener("click", () => {
+      if (currentPage > 0) {
+        currentPage--;
+        showPage();
+      }
+    });
+
+    document.getElementById("resetQuizBtn").addEventListener("click", () => {
+      currentPage = 0;
+      showPage();
+      document.getElementById("resetQuizBtn").style.display = "none";
+    });
+  </script>
+</body>
+</html>
