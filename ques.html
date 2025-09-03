@@ -18,28 +18,18 @@
     .navigation { margin-top: 20px; display: flex; justify-content: space-between; }
     #resetQuizBtn { background:#dc3545; color:white; padding:8px 15px; border:none; border-radius:5px; cursor:pointer; margin-top:15px; }
 
-    /* Green and red blink for question box */
-    .blink-green {
-      animation: blink-green 0.8s linear 2;
-      background-color: #d4edda !important;
+    /* Blinking effect */
+    .blink {
+      animation: blink 0.5s step-start 4;
+      background-color: #ffcccc;
     }
-    @keyframes blink-green {
-      0%, 100% { background-color: #fff; }
-      20%, 80% { background-color: #d4edda; }
-    }
-
-    .blink-red {
-      animation: blink-red 0.8s linear 2;
-      background-color: #f8d7da !important;
-    }
-    @keyframes blink-red {
-      0%, 100% { background-color: #fff; }
-      20%, 80% { background-color: #f8d7da; }
+    @keyframes blink {
+      50% { background-color: transparent; }
     }
   </style>
 </head>
 <body>
-  <div class="quiz-container">
+ <div class="quiz-container">
     <div id="quiz"></div>
 
     <div class="navigation">
@@ -78,8 +68,8 @@
               </label>
             </div>
           `).join("")}
-          <button class="btn reset-btn" onclick="resetChoice(${start + index})">Reset</button>
-          <button class="btn check-btn" onclick="checkAnswer(${start + index})">Check</button>
+          <button class="btn reset-btn" onclick="resetChoice(${start + index})">Reset Choices</button>
+          <button class="btn check-btn" onclick="checkAnswer(${start + index})">Check Answer</button>
           <div class="result" id="result-${start + index}"></div>
         </div>
       `).join("");
@@ -92,17 +82,12 @@
       const radios = document.querySelectorAll(`input[name='q${qIndex}']`);
       radios.forEach(r => r.checked = false);
       document.getElementById(`result-${qIndex}`).textContent = "";
-      // Remove blink classes on reset
-      const box = document.querySelector(`.question-box[data-qid='${qIndex}']`);
-      box.classList.remove("blink-green", "blink-red");
     }
 
     function checkAnswer(qIndex) {
       const q = questions[qIndex];
       const selected = document.querySelector(`input[name='q${qIndex}']:checked`);
       const resultDiv = document.getElementById(`result-${qIndex}`);
-      const box = document.querySelector(`.question-box[data-qid='${qIndex}']`);
-      box.classList.remove("blink-green", "blink-red"); // reset before applying
 
       if (!selected) {
         alert("Choose an answer!");
@@ -111,12 +96,12 @@
 
       if (selected.value === q.answer) {
         resultDiv.textContent = "✅ Correct!";
-        box.classList.add("blink-green");
-        setTimeout(() => box.classList.remove("blink-green"), 1000);
       } else {
-        resultDiv.textContent = "❌ Wrong! Correct: " + q.answer;
-        box.classList.add("blink-red");
-        setTimeout(() => box.classList.remove("blink-red"), 1000);
+        resultDiv.textContent = "❌ Wrong! Correct: ";
+        selected.parentElement.parentElement.classList.add("blink");
+        setTimeout(() => {
+          selected.parentElement.parentElement.classList.remove("blink");
+        }, 2000);
       }
     }
 
@@ -143,4 +128,3 @@
   </script>
 </body>
 </html>
-
