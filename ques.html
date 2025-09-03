@@ -202,99 +202,129 @@
         let currentPage = 0;
         const questionsPerPage = 10;
         let questions = [];
-
+      
+        // Store shuffled options to maintain them across re-renders
+        const shuffledQuestionOptions = {};
+      
+        // Fetch questions
         fetch("questions.json")
-            .then(res => res.json())
-            .then(data => {
-                questions = data;
-                showPage();
-            });
-
+          .then(res => res.json())
+          .then(data => {
+            questions = data;
+            showPage();
+          });
+      
+        // Utility function to shuffle an array
+        function shuffleArray(array) {
+          return array
+            .map(value => ({ value, sort: Math.random() }))
+            .sort((a, b) => a.sort - b.sort)
+            .map(({ value }) => value);
+        }
+      
+        // Show the current page
         function showPage() {
-            const start = currentPage * questionsPerPage;
-            const end = start + questionsPerPage;
-            const pageQuestions = questions.slice(start, end);
-
-            const quizDiv = document.getElementById("quiz");
-            quizDiv.innerHTML = pageQuestions.map((q, index) => `
-        <div class="question-box" data-qid="${start + index}">
-          <div class="question">${start + index + 1}. ${q.question}</div>
-          ${q.options.map(opt => `
-            <div class="option">
-              <label>
-                <input type="radio" name="q${start + index}" value="${opt}"> ${opt}
-              </label>
-            </div>
-          `).join("")}
-          <button class="btn reset-btn" onclick="resetChoice(${start + index})">Reset</button>
-          <button class="btn check-btn" onclick="checkAnswer(${start + index})">Check</button>
-          <div class="result" id="result-${start + index}"></div>
-        </div>
-      `).join("");
-
-            document.getElementById("prevBtn").disabled = currentPage === 0;
-            document.getElementById("nextBtn").disabled = end >= questions.length;
+          const start = currentPage * questionsPerPage;
+          const end = start + questionsPerPage;
+          const pageQuestions = questions.slice(start, end);
+      
+          const quizDiv = document.getElementById("quiz");
+          quizDiv.innerHTML = pageQuestions.map((q, index) => {
+            const questionIndex = start + index;
+      
+            // If not already shuffled, do it once and store
+            if (!shuffledQuestionOptions[questionIndex]) {
+              shuffledQuestionOptions[questionIndex] = shuffleArray([...q.options]);
+            }
+      
+            const shuffledOptions = shuffledQuestionOptions[questionIndex];
+      
+            return `
+              <div class="question-box" data-qid="${questionIndex}" data-answer="${q.answer}">
+                <div class="question">${questionIndex + 1}. ${q.question}</div>
+                ${shuffledOptions.map(opt => `
+                  <div class="option">
+                    <label>
+                      <input type="radio" name="q${questionIndex}" value="${opt}"> ${opt}
+                    </label>
+                  </div>
+                `).join("")}
+                <button class="btn reset-btn" onclick="resetChoice(${questionIndex})">Reset</button>
+                <button class="btn check-btn" onclick="checkAnswer(${questionIndex})">Check</button>
+                <div class="result" id="result-${questionIndex}"></div>
+              </div>
+            `;
+          }).join("");
+      
+          document.getElementById("prevBtn").disabled = currentPage === 0;
+          document.getElementById("nextBtn").disabled = end >= questions.length;
         }
-
+      
+        // Reset selected answer for a question
         function resetChoice(qIndex) {
-            const radios = document.querySelectorAll(`input[name='q${qIndex}']`);
-            radios.forEach(r => r.checked = false);
-
-            const resultDiv = document.getElementById(`result-${qIndex}`);
-            resultDiv.textContent = "";
-            resultDiv.classList.remove("correct-text", "incorrect-text");
-
-            const questionBox = document.querySelector(`.question-box[data-qid='${qIndex}']`);
-            questionBox.classList.remove("blink-green", "blink-red");
+          const radios = document.querySelectorAll(`input[name='q${qIndex}']`);
+          radios.forEach(r => r.checked = false);
+      
+          const resultDiv = document.getElementById(`result-${qIndex}`);
+          resultDiv.textContent = "";
+          resultDiv.classList.remove("correct-text", "incorrect-text");
+      
+          const questionBox = document.querySelector(`.question-box[data-qid='${qIndex}']`);
+          questionBox.classList.remove("blink-green", "blink-red");
         }
-
+      
+        // Check the selected answer
         function checkAnswer(qIndex) {
-            const q = questions[qIndex];
-            const selected = document.querySelector(`input[name='q${qIndex}']:checked`);
-            const resultDiv = document.getElementById(`result-${qIndex}`);
-            const questionBox = document.querySelector(`.question-box[data-qid='${qIndex}']`);
-
-            if (!selected) {
-                alert("Choose an answer!");
-                return;
-            }
-
-            // Clear previous
-            resultDiv.classList.remove("correct-text", "incorrect-text");
-            questionBox.classList.remove("blink-green", "blink-red");
-
-            if (selected.value === q.answer) {
-                resultDiv.textContent = "✅ Correct!";
-                resultDiv.classList.add("correct-text");
-                questionBox.classList.add("blink-green");
-            } else {
-                resultDiv.textContent = "❌ Wrong!";
-                resultDiv.classList.add("incorrect-text");
-                questionBox.classList.add("blink-red");
-            }
+          const questionBox = document.querySelector(`.question-box[data-qid='${qIndex}']`);
+          const correctAnswer = questionBox.getAttribute("data-answer");
+          const selected = document.querySelector(`input[name='q${qIndex}']:checked`);
+          const resultDiv = document.getElementById(`result-${qIndex}`);
+      
+          if (!selected) {
+            alert("Choose an answer!");
+            return;
+          }
+      
+          resultDiv.classList.remove("correct-text", "incorrect-text");
+          questionBox.classList.remove("blink-green", "blink-red");
+      
+          if (selected.value === correctAnswer) {
+            resultDiv.textContent = "✅ Correct!";
+            resultDiv.classList.add("correct-text");
+            questionBox.classList.add("blink-green");
+          } else {
+            resultDiv.textContent = "❌ Wrong!";
+            resultDiv.classList.add("incorrect-text");
+            questionBox.classList.add("blink-red");
+          }
         }
-
+      
+        // Navigation: Next
         document.getElementById("nextBtn").addEventListener("click", () => {
-            currentPage++;
-            showPage();
-            if ((currentPage + 1) * questionsPerPage >= questions.length) {
-                document.getElementById("resetQuizBtn").style.display = "inline-block";
-            }
+          currentPage++;
+          showPage();
+      
+          if ((currentPage + 1) * questionsPerPage >= questions.length) {
+            document.getElementById("resetQuizBtn").style.display = "inline-block";
+          }
         });
-
+      
+        // Navigation: Prev
         document.getElementById("prevBtn").addEventListener("click", () => {
-            if (currentPage > 0) {
-                currentPage--;
-                showPage();
-            }
-        });
-
-        document.getElementById("resetQuizBtn").addEventListener("click", () => {
-            currentPage = 0;
+          if (currentPage > 0) {
+            currentPage--;
             showPage();
-            document.getElementById("resetQuizBtn").style.display = "none";
+          }
         });
-    </script>
+      
+        // Reset quiz to page 1
+        document.getElementById("resetQuizBtn").addEventListener("click", () => {
+          currentPage = 0;
+          showPage();
+          document.getElementById("resetQuizBtn").style.display = "none";
+        });
+      </script>
+      
 </body>
 
 </html>
