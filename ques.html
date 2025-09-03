@@ -1,204 +1,222 @@
 <!DOCTYPE html>
 <html lang="ta">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  <title>SRB and DRM Practice Questions</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>SRB and DRM Practice Questions</title>
 
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      margin: 2px;
-      background: #f0f4f8;
-      color: #333;
-    }
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 2px;
+            background: #f0f4f8;
+            color: #333;
+        }
 
-    .quiz-container {
-      max-width: 900px;
-      margin: auto;
-      background: #ffffff;
-      padding: 10px;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    }
+        .quiz-container {
+            max-width: 900px;
+            margin: auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
 
-    .question-box {
-      border: 1px solid #e0e0e0;
-      padding: 20px;
-      border-radius: 10px;
-      margin-bottom: 25px;
-      background: #fafafa;
-      transition: box-shadow 0.3s ease-in-out;
-    }
+        .question-box {
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            background: #fafafa;
+            transition: box-shadow 0.3s ease-in-out;
+        }
 
-    .question-box:hover {
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
-    }
+        .question-box:hover {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        }
 
-    .question {
-      font-size: 19px;
-      font-weight: 600;
-      margin-bottom: 15px;
-      color: #0d47a1;
-    }
+        .question {
+            font-size: 19px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #0d47a1;
+        }
 
-    .option {
-      margin: 8px 0;
-    }
+        .option {
+            margin: 8px 0;
+        }
 
-    .option label {
-      cursor: pointer;
-    }
+        .option label {
+            cursor: pointer;
+        }
 
-    input[type="radio"] {
-      accent-color: #007bff;
-      margin-right: 8px;
-    }
+        input[type="radio"] {
+            accent-color: #007bff;
+            margin-right: 8px;
+        }
 
-    .btn {
-      margin: 8px 6px 0 0;
-      padding: 10px 18px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 15px;
-      font-weight: 600;
-      transition: background-color 0.3s, transform 0.2s;
-    }
+        .btn {
+            margin: 8px 6px 0 0;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: background-color 0.3s, transform 0.2s;
+        }
 
-    .check-btn {
-      background-color: #007bff;
-      color: #fff;
-    }
+        .check-btn {
+            background-color: #007bff;
+            color: #fff;
+        }
 
-    .check-btn:hover {
-      background-color: #0056b3;
-      transform: translateY(-2px);
-    }
+        .check-btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
 
-    .reset-btn {
-      background-color: #f80e55;
-      color: #fff;
-    }
+        .reset-btn {
+            background-color: #f80e55;
+            color: #fff;
+        }
 
-    .reset-btn:hover {
-      background-color: #f80e55;
-      transform: translateY(-2px);
-    }
+        .reset-btn:hover {
+            background-color: #f80e55;
+            transform: translateY(-2px);
+        }
 
-    .navigation {
-      margin-top: 25px;
-      display: flex;
-      justify-content: space-between;
-    }
+        .navigation {
+            margin-top: 25px;
+            display: flex;
+            justify-content: space-between;
+        }
 
-    .navigation button {
-      padding: 10px 20px;
-      font-size: 16px;
-      font-weight: 600;
-      background-color: #20c997;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0.3s, transform 0.2s;
-    }
+        .navigation button {
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            background-color: #004d40;
+            /* Dark Teal */
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
 
-    .navigation button:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
+        .navigation button:disabled {
+            background-color: #999;
+            cursor: not-allowed;
+        }
 
-    .navigation button:hover:not(:disabled) {
-      background-color: #17a589;
-      transform: translateY(-2px);
-    }
+        .navigation button:hover:not(:disabled) {
+            background-color: #00695c;
+            /* Slightly lighter on hover */
+            transform: translateY(-2px);
+        }
 
-    #resetQuizBtn {
-      background-color: #dc3545;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 30px;
-      display: inline-block;
-      font-size: 16px;
-      font-weight: bold;
-    }
 
-    #resetQuizBtn:hover {
-      background-color: #bd2130;
-      transform: translateY(-2px);
-    }
+        #resetQuizBtn {
+            background-color: #dc3545;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 30px;
+            display: inline-block;
+            font-size: 16px;
+            font-weight: bold;
+        }
 
-    .result {
-      margin-top: 12px;
-      font-weight: bold;
-      font-size: 16px;
-    }
+        #resetQuizBtn:hover {
+            background-color: #bd2130;
+            transform: translateY(-2px);
+        }
 
-    .correct-text {
-      color: #2e7d32;
-    }
+        .result {
+            margin-top: 12px;
+            font-weight: bold;
+            font-size: 16px;
+        }
 
-    .incorrect-text {
-      color: #d32f2f;
-    }
+        .correct-text {
+            color: #2e7d32;
+        }
 
-    /* Blinking Effects */
-    @keyframes glowGreen {
-      0%, 100% { box-shadow: 0 0 0px rgba(76, 175, 80, 0); }
-      50% { box-shadow: 0 0 20px 10px rgba(76, 175, 80, 0.6); }
-    }
+        .incorrect-text {
+            color: #d32f2f;
+        }
 
-    @keyframes glowRed {
-      0%, 100% { box-shadow: 0 0 0px rgba(244, 67, 54, 0); }
-      50% { box-shadow: 0 0 20px 10px rgba(244, 67, 54, 0.6); }
-    }
+        /* Blinking Effects */
+        @keyframes glowGreen {
 
-    .blink-green {
-      animation: glowGreen 0.5s ease-in-out 6;
-    }
+            0%,
+            100% {
+                box-shadow: 0 0 0px rgba(76, 175, 80, 0);
+            }
 
-    .blink-red {
-      animation: glowRed 0.5s ease-in-out 6;
-    }
-  </style>
+            50% {
+                box-shadow: 0 0 20px 10px rgba(76, 175, 80, 0.6);
+            }
+        }
+
+        @keyframes glowRed {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0px rgba(244, 67, 54, 0);
+            }
+
+            50% {
+                box-shadow: 0 0 20px 10px rgba(244, 67, 54, 0.6);
+            }
+        }
+
+        .blink-green {
+            animation: glowGreen 0.5s ease-in-out 6;
+        }
+
+        .blink-red {
+            animation: glowRed 0.5s ease-in-out 6;
+        }
+    </style>
 </head>
 
 <body>
-  <div class="quiz-container">
-    <div id="quiz"></div>
+    <div class="quiz-container">
+        <div id="quiz"></div>
 
-    <div class="navigation">
-      <button id="prevBtn" disabled>⬅ Prev</button>
-      <button id="nextBtn">Next ➡</button>
+        <div class="navigation">
+            <button id="prevBtn" disabled>⬅ Prev</button>
+            <button id="nextBtn">Next ➡</button>
+        </div>
+
+        <button id="resetQuizBtn" style="display:none;">🔄 Reset Quiz</button>
     </div>
 
-    <button id="resetQuizBtn" style="display:none;">🔄 Reset Quiz</button>
-  </div>
+    <script>
+        let currentPage = 0;
+        const questionsPerPage = 10;
+        let questions = [];
 
-  <script>
-    let currentPage = 0;
-    const questionsPerPage = 10;
-    let questions = [];
+        fetch("questions.json")
+            .then(res => res.json())
+            .then(data => {
+                questions = data;
+                showPage();
+            });
 
-    fetch("questions.json")
-      .then(res => res.json())
-      .then(data => {
-        questions = data;
-        showPage();
-      });
+        function showPage() {
+            const start = currentPage * questionsPerPage;
+            const end = start + questionsPerPage;
+            const pageQuestions = questions.slice(start, end);
 
-    function showPage() {
-      const start = currentPage * questionsPerPage;
-      const end = start + questionsPerPage;
-      const pageQuestions = questions.slice(start, end);
-
-      const quizDiv = document.getElementById("quiz");
-      quizDiv.innerHTML = pageQuestions.map((q, index) => `
+            const quizDiv = document.getElementById("quiz");
+            quizDiv.innerHTML = pageQuestions.map((q, index) => `
         <div class="question-box" data-qid="${start + index}">
           <div class="question">${start + index + 1}. ${q.question}</div>
           ${q.options.map(opt => `
@@ -214,68 +232,69 @@
         </div>
       `).join("");
 
-      document.getElementById("prevBtn").disabled = currentPage === 0;
-      document.getElementById("nextBtn").disabled = end >= questions.length;
-    }
+            document.getElementById("prevBtn").disabled = currentPage === 0;
+            document.getElementById("nextBtn").disabled = end >= questions.length;
+        }
 
-    function resetChoice(qIndex) {
-      const radios = document.querySelectorAll(`input[name='q${qIndex}']`);
-      radios.forEach(r => r.checked = false);
+        function resetChoice(qIndex) {
+            const radios = document.querySelectorAll(`input[name='q${qIndex}']`);
+            radios.forEach(r => r.checked = false);
 
-      const resultDiv = document.getElementById(`result-${qIndex}`);
-      resultDiv.textContent = "";
-      resultDiv.classList.remove("correct-text", "incorrect-text");
+            const resultDiv = document.getElementById(`result-${qIndex}`);
+            resultDiv.textContent = "";
+            resultDiv.classList.remove("correct-text", "incorrect-text");
 
-      const questionBox = document.querySelector(`.question-box[data-qid='${qIndex}']`);
-      questionBox.classList.remove("blink-green", "blink-red");
-    }
+            const questionBox = document.querySelector(`.question-box[data-qid='${qIndex}']`);
+            questionBox.classList.remove("blink-green", "blink-red");
+        }
 
-    function checkAnswer(qIndex) {
-      const q = questions[qIndex];
-      const selected = document.querySelector(`input[name='q${qIndex}']:checked`);
-      const resultDiv = document.getElementById(`result-${qIndex}`);
-      const questionBox = document.querySelector(`.question-box[data-qid='${qIndex}']`);
+        function checkAnswer(qIndex) {
+            const q = questions[qIndex];
+            const selected = document.querySelector(`input[name='q${qIndex}']:checked`);
+            const resultDiv = document.getElementById(`result-${qIndex}`);
+            const questionBox = document.querySelector(`.question-box[data-qid='${qIndex}']`);
 
-      if (!selected) {
-        alert("Choose an answer!");
-        return;
-      }
+            if (!selected) {
+                alert("Choose an answer!");
+                return;
+            }
 
-      // Clear previous
-      resultDiv.classList.remove("correct-text", "incorrect-text");
-      questionBox.classList.remove("blink-green", "blink-red");
+            // Clear previous
+            resultDiv.classList.remove("correct-text", "incorrect-text");
+            questionBox.classList.remove("blink-green", "blink-red");
 
-      if (selected.value === q.answer) {
-        resultDiv.textContent = "✅ Correct!";
-        resultDiv.classList.add("correct-text");
-        questionBox.classList.add("blink-green");
-      } else {
-        resultDiv.textContent = "❌ Wrong!";
-        resultDiv.classList.add("incorrect-text");
-        questionBox.classList.add("blink-red");
-      }
-    }
+            if (selected.value === q.answer) {
+                resultDiv.textContent = "✅ Correct!";
+                resultDiv.classList.add("correct-text");
+                questionBox.classList.add("blink-green");
+            } else {
+                resultDiv.textContent = "❌ Wrong!";
+                resultDiv.classList.add("incorrect-text");
+                questionBox.classList.add("blink-red");
+            }
+        }
 
-    document.getElementById("nextBtn").addEventListener("click", () => {
-      currentPage++;
-      showPage();
-      if ((currentPage + 1) * questionsPerPage >= questions.length) {
-        document.getElementById("resetQuizBtn").style.display = "inline-block";
-      }
-    });
+        document.getElementById("nextBtn").addEventListener("click", () => {
+            currentPage++;
+            showPage();
+            if ((currentPage + 1) * questionsPerPage >= questions.length) {
+                document.getElementById("resetQuizBtn").style.display = "inline-block";
+            }
+        });
 
-    document.getElementById("prevBtn").addEventListener("click", () => {
-      if (currentPage > 0) {
-        currentPage--;
-        showPage();
-      }
-    });
+        document.getElementById("prevBtn").addEventListener("click", () => {
+            if (currentPage > 0) {
+                currentPage--;
+                showPage();
+            }
+        });
 
-    document.getElementById("resetQuizBtn").addEventListener("click", () => {
-      currentPage = 0;
-      showPage();
-      document.getElementById("resetQuizBtn").style.display = "none";
-    });
-  </script>
+        document.getElementById("resetQuizBtn").addEventListener("click", () => {
+            currentPage = 0;
+            showPage();
+            document.getElementById("resetQuizBtn").style.display = "none";
+        });
+    </script>
 </body>
+
 </html>
