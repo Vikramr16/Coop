@@ -1,35 +1,174 @@
 <!DOCTYPE html>
 <html lang="ta">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SRB and DRM Practice Questions</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 40px; background: #f9f9f9; }
-    .quiz-container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-    .question-box { border: 1px solid #ddd; padding: 15px; border-radius: 8px; margin-bottom: 20px; background: #fff; }
-    .question { font-size: 18px; margin-bottom: 10px; }
-    .option { margin: 6px 0; }
-    .btn { margin: 5px 5px 0 0; padding: 6px 12px; border: none; border-radius: 5px; cursor: pointer; }
-    .reset-btn { background: #6c757d; color: white; }
-    .check-btn { background: #007bff; color: white; }
-    .btn:hover { opacity: 0.9; }
-    .result { margin-top: 10px; font-weight: bold; }
-    .navigation { margin-top: 20px; display: flex; justify-content: space-between; }
-    #resetQuizBtn { background:#dc3545; color:white; padding:8px 15px; border:none; border-radius:5px; cursor:pointer; margin-top:15px; }
 
-    /* Blinking effect */
-    .blink {
-      animation: blink 0.5s step-start 4;
-      background-color: #ffcccc;
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 40px;
+      background: #f0f4f8;
+      color: #333;
     }
-    @keyframes blink {
-      50% { background-color: transparent; }
+
+    .quiz-container {
+      max-width: 900px;
+      margin: auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .question-box {
+      border: 1px solid #e0e0e0;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 25px;
+      background: #fafafa;
+      transition: box-shadow 0.3s ease-in-out;
+    }
+
+    .question-box:hover {
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+
+    .question {
+      font-size: 19px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #0d47a1;
+    }
+
+    .option {
+      margin: 8px 0;
+    }
+
+    .option label {
+      cursor: pointer;
+    }
+
+    input[type="radio"] {
+      accent-color: #007bff;
+      margin-right: 8px;
+    }
+
+    .btn {
+      margin: 8px 6px 0 0;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .check-btn {
+      background-color: #007bff;
+      color: #fff;
+    }
+
+    .check-btn:hover {
+      background-color: #0056b3;
+      transform: translateY(-2px);
+    }
+
+    .reset-btn {
+      background-color: #6c757d;
+      color: #fff;
+    }
+
+    .reset-btn:hover {
+      background-color: #5a6268;
+      transform: translateY(-2px);
+    }
+
+    .navigation {
+      margin-top: 25px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .navigation button {
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: 600;
+      background-color: #20c997;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .navigation button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .navigation button:hover:not(:disabled) {
+      background-color: #17a589;
+      transform: translateY(-2px);
+    }
+
+    #resetQuizBtn {
+      background-color: #dc3545;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 30px;
+      display: inline-block;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    #resetQuizBtn:hover {
+      background-color: #bd2130;
+      transform: translateY(-2px);
+    }
+
+    .result {
+      margin-top: 12px;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .correct-text {
+      color: #2e7d32;
+    }
+
+    .incorrect-text {
+      color: #d32f2f;
+    }
+
+    /* Blinking Effects */
+    @keyframes glowGreen {
+      0%, 100% { box-shadow: 0 0 0px rgba(76, 175, 80, 0); }
+      50% { box-shadow: 0 0 20px 10px rgba(76, 175, 80, 0.6); }
+    }
+
+    @keyframes glowRed {
+      0%, 100% { box-shadow: 0 0 0px rgba(244, 67, 54, 0); }
+      50% { box-shadow: 0 0 20px 10px rgba(244, 67, 54, 0.6); }
+    }
+
+    .blink-green {
+      animation: glowGreen 0.5s ease-in-out 6;
+    }
+
+    .blink-red {
+      animation: glowRed 0.5s ease-in-out 6;
     }
   </style>
 </head>
+
 <body>
- <div class="quiz-container">
+  <div class="quiz-container">
     <div id="quiz"></div>
 
     <div class="navigation">
@@ -37,7 +176,7 @@
       <button id="nextBtn">Next ➡</button>
     </div>
 
-    <button id="resetQuizBtn" style="display:none;">Reset Quiz</button>
+    <button id="resetQuizBtn" style="display:none;">🔄 Reset Quiz</button>
   </div>
 
   <script>
@@ -68,8 +207,8 @@
               </label>
             </div>
           `).join("")}
-          <button class="btn reset-btn" onclick="resetChoice(${start + index})">Reset Choices</button>
-          <button class="btn check-btn" onclick="checkAnswer(${start + index})">Check Answer</button>
+          <button class="btn reset-btn" onclick="resetChoice(${start + index})">Reset</button>
+          <button class="btn check-btn" onclick="checkAnswer(${start + index})">Check</button>
           <div class="result" id="result-${start + index}"></div>
         </div>
       `).join("");
@@ -81,27 +220,38 @@
     function resetChoice(qIndex) {
       const radios = document.querySelectorAll(`input[name='q${qIndex}']`);
       radios.forEach(r => r.checked = false);
-      document.getElementById(`result-${qIndex}`).textContent = "";
+
+      const resultDiv = document.getElementById(`result-${qIndex}`);
+      resultDiv.textContent = "";
+      resultDiv.classList.remove("correct-text", "incorrect-text");
+
+      const questionBox = document.querySelector(`.question-box[data-qid='${qIndex}']`);
+      questionBox.classList.remove("blink-green", "blink-red");
     }
 
     function checkAnswer(qIndex) {
       const q = questions[qIndex];
       const selected = document.querySelector(`input[name='q${qIndex}']:checked`);
       const resultDiv = document.getElementById(`result-${qIndex}`);
+      const questionBox = document.querySelector(`.question-box[data-qid='${qIndex}']`);
 
       if (!selected) {
         alert("Choose an answer!");
         return;
       }
 
+      // Clear previous
+      resultDiv.classList.remove("correct-text", "incorrect-text");
+      questionBox.classList.remove("blink-green", "blink-red");
+
       if (selected.value === q.answer) {
         resultDiv.textContent = "✅ Correct!";
+        resultDiv.classList.add("correct-text");
+        questionBox.classList.add("blink-green");
       } else {
-        resultDiv.textContent = "❌ Wrong! Correct: ";
-        selected.parentElement.parentElement.classList.add("blink");
-        setTimeout(() => {
-          selected.parentElement.parentElement.classList.remove("blink");
-        }, 2000);
+        resultDiv.textContent = "❌ Wrong!";
+        resultDiv.classList.add("incorrect-text");
+        questionBox.classList.add("blink-red");
       }
     }
 
