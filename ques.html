@@ -177,11 +177,11 @@
         }
 
         .blink-green {
-            animation: glowGreen 1s ease-in-out 1;
+            animation: glowGreen 1.2s ease-in-out 1;
         }
 
         .blink-red {
-            animation: glowRed 1s ease-in-out 1;
+            animation: glowRed 1.2s ease-in-out 1;
         }
     </style>
 </head>
@@ -203,9 +203,6 @@
         const questionsPerPage = 10;
         let questions = [];
       
-        // Store shuffled options to maintain them across re-renders
-        const shuffledQuestionOptions = {};
-      
         // Fetch questions
         fetch("questions.json")
           .then(res => res.json())
@@ -214,15 +211,6 @@
             showPage();
           });
       
-        // Utility function to shuffle an array
-        function shuffleArray(array) {
-          return array
-            .map(value => ({ value, sort: Math.random() }))
-            .sort((a, b) => a.sort - b.sort)
-            .map(({ value }) => value);
-        }
-      
-        // Show the current page
         function showPage() {
           const start = currentPage * questionsPerPage;
           const end = start + questionsPerPage;
@@ -232,17 +220,10 @@
           quizDiv.innerHTML = pageQuestions.map((q, index) => {
             const questionIndex = start + index;
       
-            // If not already shuffled, do it once and store
-            if (!shuffledQuestionOptions[questionIndex]) {
-              shuffledQuestionOptions[questionIndex] = shuffleArray([...q.options]);
-            }
-      
-            const shuffledOptions = shuffledQuestionOptions[questionIndex];
-      
             return `
               <div class="question-box" data-qid="${questionIndex}" data-answer="${q.answer}">
                 <div class="question">${questionIndex + 1}. ${q.question}</div>
-                ${shuffledOptions.map(opt => `
+                ${q.options.map(opt => `
                   <div class="option">
                     <label>
                       <input type="radio" name="q${questionIndex}" value="${opt}"> ${opt}
@@ -260,7 +241,6 @@
           document.getElementById("nextBtn").disabled = end >= questions.length;
         }
       
-        // Reset selected answer for a question
         function resetChoice(qIndex) {
           const radios = document.querySelectorAll(`input[name='q${qIndex}']`);
           radios.forEach(r => r.checked = false);
@@ -273,7 +253,6 @@
           questionBox.classList.remove("blink-green", "blink-red");
         }
       
-        // Check the selected answer
         function checkAnswer(qIndex) {
           const questionBox = document.querySelector(`.question-box[data-qid='${qIndex}']`);
           const correctAnswer = questionBox.getAttribute("data-answer");
@@ -285,8 +264,12 @@
             return;
           }
       
+          // Remove any previous feedback styles
           resultDiv.classList.remove("correct-text", "incorrect-text");
           questionBox.classList.remove("blink-green", "blink-red");
+      
+          // 👉 Force reflow to retrigger animation
+          void questionBox.offsetWidth;
       
           if (selected.value === correctAnswer) {
             resultDiv.textContent = "✅ Correct!";
@@ -299,7 +282,6 @@
           }
         }
       
-        // Navigation: Next
         document.getElementById("nextBtn").addEventListener("click", () => {
           currentPage++;
           showPage();
@@ -309,7 +291,6 @@
           }
         });
       
-        // Navigation: Prev
         document.getElementById("prevBtn").addEventListener("click", () => {
           if (currentPage > 0) {
             currentPage--;
@@ -317,13 +298,13 @@
           }
         });
       
-        // Reset quiz to page 1
         document.getElementById("resetQuizBtn").addEventListener("click", () => {
           currentPage = 0;
           showPage();
           document.getElementById("resetQuizBtn").style.display = "none";
         });
       </script>
+      
       
 </body>
 
