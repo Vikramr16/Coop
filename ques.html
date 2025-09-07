@@ -199,112 +199,128 @@
     </div>
 
     <script>
-        let currentPage = 0;
-        const questionsPerPage = 10;
-        let questions = [];
-      
-        // Fetch questions
-        fetch("questions.json")
-          .then(res => res.json())
-          .then(data => {
-            questions = data;
-            showPage();
+      let currentPage = 0;
+      const questionsPerPage = 10;
+      let questions = [];
+    
+      // Fisher-Yates shuffle
+      function shuffleArray(array) {
+        const arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      }
+    
+      // Fetch and process questions
+      fetch("questions.json")
+        .then(res => res.json())
+        .then(data => {
+          questions = data.map(q => {
+            const originalOptions = q.options;
+            const shuffled = shuffleArray(originalOptions);
+            const correctIndex = shuffled.indexOf(q.answer);
+            return {
+              ...q,
+              shuffledOptions: shuffled,
+              correctIndex: correctIndex
+            };
           });
-      
-        function showPage() {
-          const start = currentPage * questionsPerPage;
-          const end = start + questionsPerPage;
-          const pageQuestions = questions.slice(start, end);
-      
-          const quizDiv = document.getElementById("quiz");
-          quizDiv.innerHTML = pageQuestions.map((q, index) => {
-            const questionIndex = start + index;
-      
-            return `
-              <div class="question-box" data-qid="${questionIndex}" data-answer="${q.answer}">
-                <div class="question">${questionIndex + 1}. ${q.question}</div>
-                ${q.options.map(opt => `
-                  <div class="option">
-                    <label>
-                      <input type="radio" name="q${questionIndex}" value="${opt}"> ${opt}
-                    </label>
-                  </div>
-                `).join("")}
-                <button class="btn reset-btn" onclick="resetChoice(${questionIndex})">Reset</button>
-                <button class="btn check-btn" onclick="checkAnswer(${questionIndex})">Check</button>
-                <div class="result" id="result-${questionIndex}"></div>
-              </div>
-            `;
-          }).join("");
-      
-          document.getElementById("prevBtn").disabled = currentPage === 0;
-          document.getElementById("nextBtn").disabled = end >= questions.length;
-        }
-      
-        function resetChoice(qIndex) {
-          const radios = document.querySelectorAll(`input[name='q${qIndex}']`);
-          radios.forEach(r => r.checked = false);
-      
-          const resultDiv = document.getElementById(`result-${qIndex}`);
-          resultDiv.textContent = "";
-          resultDiv.classList.remove("correct-text", "incorrect-text");
-      
-          const questionBox = document.querySelector(`.question-box[data-qid='${qIndex}']`);
-          questionBox.classList.remove("blink-green", "blink-red");
-        }
-      
-        function checkAnswer(qIndex) {
-          const questionBox = document.querySelector(`.question-box[data-qid='${qIndex}']`);
-          const correctAnswer = questionBox.getAttribute("data-answer");
-          const selected = document.querySelector(`input[name='q${qIndex}']:checked`);
-          const resultDiv = document.getElementById(`result-${qIndex}`);
-      
-          if (!selected) {
-            alert("Choose an answer!");
-            return;
-          }
-      
-          // Remove any previous feedback styles
-          resultDiv.classList.remove("correct-text", "incorrect-text");
-          questionBox.classList.remove("blink-green", "blink-red");
-      
-          // 👉 Force reflow to retrigger animation
-          void questionBox.offsetWidth;
-      
-          if (selected.value === correctAnswer) {
-            resultDiv.textContent = "✅ Correct!";
-            resultDiv.classList.add("correct-text");
-            questionBox.classList.add("blink-green");
-          } else {
-            resultDiv.textContent = "❌ Wrong!";
-            resultDiv.classList.add("incorrect-text");
-            questionBox.classList.add("blink-red");
-          }
-        }
-      
-        document.getElementById("nextBtn").addEventListener("click", () => {
-          currentPage++;
           showPage();
-      
-          if ((currentPage + 1) * questionsPerPage >= questions.length) {
-            document.getElementById("resetQuizBtn").style.display = "inline-block";
-          }
         });
-      
-        document.getElementById("prevBtn").addEventListener("click", () => {
-          if (currentPage > 0) {
-            currentPage--;
-            showPage();
-          }
-        });
-      
-        document.getElementById("resetQuizBtn").addEventListener("click", () => {
-          currentPage = 0;
+    
+      function showPage() {
+        const start = currentPage * questionsPerPage;
+        const end = start + questionsPerPage;
+        const pageQuestions = questions.slice(start, end);
+    
+        const quizDiv = document.getElementById("quiz");
+        quizDiv.innerHTML = pageQuestions.map((q, index) => {
+          const questionIndex = start + index;
+    
+          return `
+            <div class="question-box" data-qid="${questionIndex}">
+              <div class="question">${questionIndex + 1}. ${q.question}</div>
+              ${q.shuffledOptions.map((opt, i) => `
+                <div class="option">
+                  <label>
+                    <input type="radio" name="q${questionIndex}" value="${i}"> ${opt}
+                  </label>
+                </div>
+              `).join("")}
+              <button class="btn reset-btn" onclick="resetChoice(${questionIndex})">Reset</button>
+              <button class="btn check-btn" onclick="checkAnswer(${questionIndex})">Check</button>
+              <div class="result" id="result-${questionIndex}"></div>
+            </div>
+          `;
+        }).join("");
+    
+        document.getElementById("prevBtn").disabled = currentPage === 0;
+        document.getElementById("nextBtn").disabled = end >= questions.length;
+      }
+    
+      function resetChoice(qIndex) {
+        const radios = document.querySelectorAll(`input[name='q${qIndex}']`);
+        radios.forEach(r => r.checked = false);
+    
+        const resultDiv = document.getElementById(`result-${qIndex}`);
+        resultDiv.textContent = "";
+        resultDiv.classList.remove("correct-text", "incorrect-text");
+    
+        const questionBox = document.querySelector(`.question-box[data-qid='${qIndex}']`);
+        questionBox.classList.remove("blink-green", "blink-red");
+      }
+    
+      function checkAnswer(qIndex) {
+        const questionBox = document.querySelector(`.question-box[data-qid='${qIndex}']`);
+        const selected = document.querySelector(`input[name='q${qIndex}']:checked`);
+        const resultDiv = document.getElementById(`result-${qIndex}`);
+    
+        if (!selected) {
+          alert("Choose an answer!");
+          return;
+        }
+    
+        const selectedIndex = parseInt(selected.value);
+        const correctIndex = questions[qIndex].correctIndex;
+    
+        resultDiv.classList.remove("correct-text", "incorrect-text");
+        questionBox.classList.remove("blink-green", "blink-red");
+        void questionBox.offsetWidth;
+    
+        if (selectedIndex === correctIndex) {
+          resultDiv.textContent = "✅ Correct!";
+          resultDiv.classList.add("correct-text");
+          questionBox.classList.add("blink-green");
+        } else {
+          resultDiv.textContent = "❌ Wrong!";
+          resultDiv.classList.add("incorrect-text");
+          questionBox.classList.add("blink-red");
+        }
+      }
+    
+      document.getElementById("nextBtn").addEventListener("click", () => {
+        currentPage++;
+        showPage();
+        if ((currentPage + 1) * questionsPerPage >= questions.length) {
+          document.getElementById("resetQuizBtn").style.display = "inline-block";
+        }
+      });
+    
+      document.getElementById("prevBtn").addEventListener("click", () => {
+        if (currentPage > 0) {
+          currentPage--;
           showPage();
-          document.getElementById("resetQuizBtn").style.display = "none";
-        });
-      </script>
-      
+        }
+      });
+    
+      document.getElementById("resetQuizBtn").addEventListener("click", () => {
+        currentPage = 0;
+        showPage();
+        document.getElementById("resetQuizBtn").style.display = "none";
+      });
+    </script>    
       
 </body>
 
